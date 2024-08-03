@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                             CalculatorButton("2", CalculatorButtonType.Normal),
                             CalculatorButton("3", CalculatorButtonType.Normal),
                             CalculatorButton("+", CalculatorButtonType.Action),
-                            CalculatorButton(icon = Icons.Outlined.Refresh, type = CalculatorButtonType.Normal),
+                            CalculatorButton(icon = Icons.Outlined.Refresh, type = CalculatorButtonType.Reset),
                             CalculatorButton("0", CalculatorButtonType.Normal),
                             CalculatorButton(".", CalculatorButtonType.Normal),
                             CalculatorButton("=", CalculatorButtonType.Action),
@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                                    .background(MaterialTheme.colorScheme.secondary)
+                                    .background(MaterialTheme.colorScheme.primary)
                                     .padding(8.dp),
                                 columns = GridCells.Fixed(4),
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -140,7 +140,7 @@ class MainActivity : ComponentActivity() {
                                                         setuiText(uiText.toInt().toString() + it.text )
                                                     }.onFailure {  throwable ->  setuiText(uiText + it.text) }
                                                     if (input != null) {
-                                                        if (viewModel.firstNum.value == 0.0) {
+                                                        if (viewModel.firstNum.value == null) {
                                                             viewModel.setFirstNum(input.toDouble())
                                                         } else {
                                                             viewModel.setSecondNum(input.toDouble())
