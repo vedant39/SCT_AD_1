@@ -13,7 +13,7 @@ class ApplicationViewModel : ViewModel() {
     private val _secondNum: MutableStateFlow<Double?> = MutableStateFlow(null)
     val secondNum = _secondNum.asStateFlow()
 
-    private val _action: MutableStateFlow<String> = MutableStateFlow(" ")
+    private val _action: MutableStateFlow<String> = MutableStateFlow("")
     val action = _action.asStateFlow()
 
     fun setFirstNum(input: Double) {
@@ -36,21 +36,11 @@ class ApplicationViewModel : ViewModel() {
 
     fun getRes(): Double {
         return when (_action.value) {
-            "-" -> {
-                _firstNum.value!! - _secondNum.value!!
-            }
-            "+" -> {
-                _firstNum.value!! + _secondNum.value!!
-            }
-            "/" -> {
-                _firstNum.value!! / _secondNum.value!!
-            }
-            "x" -> {
-                _firstNum.value!! * _secondNum.value!!
-            }
-            else -> {
-                0.0
-            }
+            "-" -> _firstNum.value!! - _secondNum.value!!
+            "+" -> _firstNum.value!! + _secondNum.value!!
+            "/" -> _firstNum.value!! / _secondNum.value!!
+            "x" -> _firstNum.value!! * _secondNum.value!!
+            else -> 0.0
         }
     }
 }

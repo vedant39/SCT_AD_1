@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: ApplicationViewMode by viewModels()
+    private val viewModel: ApplicationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,9 +59,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val calculatorButtons = remember {
                         mutableListOf(
-                            CalculatorButton("AC", CalculatorButtonType.Reset),
-                            CalculatorButton("AC", CalculatorButtonType.Reset),
-                            CalculatorButton("AC", CalculatorButtonType.Reset),
+                            CalculatorButton("%", CalculatorButtonType.Action),
+                            CalculatorButton("x²", CalculatorButtonType.Action),
+                            CalculatorButton("±", CalculatorButtonType.Action),
                             CalculatorButton("/", CalculatorButtonType.Action),
                             CalculatorButton("7", CalculatorButtonType.Normal),
                             CalculatorButton("8", CalculatorButtonType.Normal),
@@ -119,21 +119,30 @@ class MainActivity : ComponentActivity() {
                                                 runCatching {
                                                     setuiText(uiText.toInt().toString()+ it.text)
                                                 }.onFailure {
-                                                    throwable ->  setuiText(uiText + it.text)
+                                                        throwable ->  setuiText(uiText + it.text)
                                                 }
                                                 setInput((input ?: "") + it.text)
                                                 if(viewModel.action.value.isNotEmpty()){
                                                     if (viewModel.secondNum.value == null){
                                                         viewModel.setSecondNum(it.text!!.toDouble())
                                                     }else{
-                                                        viewModel.setSecondNum((viewModel.secondNum.value.toString()+it.text!!).toDouble())
+                                                        if (viewModel.secondNum.value.toString().split( ".")[1] == "0"){
+                                                            viewModel.setSecondNum((viewModel.secondNum.value.toString().split(".").first()+it.text!!).toDouble())
+                                                        }else{
+                                                            viewModel.setSecondNum((viewModel.secondNum.value.toString()+it.text!!).toDouble())
+                                                        }
                                                     }
                                                 }
                                             }
                                             CalculatorButtonType.Action -> {
                                                 if (it.text == "=") {
-                                                    val result = viewModel.getRes()
-                                                    setuiText(result.toString())
+                                                    if (viewModel.firstNum.value != null && viewModel.secondNum.value != null) {
+                                                        val result = viewModel.getRes()
+                                                        setuiText(result.toString())
+                                                    } else {
+                                                        setuiText("Error")
+                                                    }
+                                                    setInput(null)
                                                     viewModel.resetAll()
                                                 } else {
                                                     runCatching {
@@ -149,37 +158,27 @@ class MainActivity : ComponentActivity() {
                                                         setInput(null)
                                                     }
                                                 }
+                                                when (it.text) {
+                                                    "%" -> {
+                                                        setuiText((uiText.toDouble() / 100).toString())
+                                                    }
+                                                    "x²" -> {
+                                                        setuiText((uiText.toDouble() * uiText.toDouble()).toString())
+                                                    }
+                                                    "±" -> {
+                                                        setuiText((uiText.toDouble() * -1).toString())
+                                                    }
+                                                }
                                             }
                                             CalculatorButtonType.Reset -> {
-                                                setuiText("")
+                                                setuiText("0")
+                                                setInput(null)
                                                 viewModel.resetAll()
                                             }
                                         }
                                     })
                                 }
                             }
-                        }
-                    }
-
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp, vertical = 4.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                        ) {
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                painter = painterResource(id = R.drawable.darkmode),
-                                contentDescription = null,
-                                tint = Color.White
-                            )
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                painter = painterResource(id = R.drawable.lightmode),
-                                contentDescription = null,
-                                tint = Color.White
-                            )
                         }
                     }
                 }
